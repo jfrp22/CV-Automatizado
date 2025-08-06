@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de CV Profesional</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --accent-color: #e74c3c;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 5px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .generator-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .form-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .preview-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="url"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-export {
+            background-color: var(--accent-color);
+            margin-left: 10px;
+        }
+        
+        .btn-export:hover {
+            background-color: #c0392b;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        /* Estilos para el CV generado */
+        .cv-template {
+            background: white;
+            padding: 30px;
+            min-height: 800px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cv-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .cv-name {
+            font-size: 2.2rem;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+        
+        .cv-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .cv-contact {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .cv-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .cv-section {
+            margin-bottom: 25px;
+        }
+        
+        .cv-section-title {
+            font-size: 1.4rem;
+            color: var(--secondary-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .cv-item {
+            margin-bottom: 20px;
+        }
+        
+        .cv-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .cv-item-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark-color);
+        }
+        
+        .cv-item-date {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        .cv-item-subtitle {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .cv-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .skill-tag {
+            background-color: var(--light-color);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media print {
+            .no-print {
+                display: none;
+            }
+            
+            .cv-template {
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+        
+        /* Pestañas para diferentes secciones */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        
+        .tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Generador de CV Profesional</h1>
+            <p>Completa el formulario y genera automáticamente tu currículum</p>
+        </header>
+        
+        <div class="generator-container">
+            <div class="form-section no-print">
+                <div class="tabs">
+                    <div class="tab active" data-tab="personal">Información Personal</div>
+                    <div class="tab" data-tab="experience">Experiencia</div>
+                    <div class="tab" data-tab="education">Educación</div>
+                    <div class="tab" data-tab="skills">Habilidades</div>
+                </div>
+                
+                <form id="cvForm">
+                    <!-- Pestaña de Información Personal -->
+                    <div class="tab-content active" id="personal-tab">
+                        <div class="form-group">
+                            <label for="fullName">Nombre Completo</label>
+                            <input type="text" id="fullName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profession">Profesión/Título</label>
+                            <input type="text" id="profession" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="about">Resumen Profesional</label>
+                            <textarea id="about" placeholder="Breve descripción de tu perfil profesional"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Correo Electrónico</label>
+                            <input type="email" id="email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Teléfono</label>
+                            <input type="tel" id="phone">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Dirección</label>
+                            <input type="text" id="address">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="linkedin">LinkedIn</label>
+                            <input type="url" id="linkedin" placeholder="https://linkedin.com/in/tuperfil">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="github">GitHub/Portafolio</label>
+                            <input type="url" id="github" placeholder="https://github.com/tuperfil">
+                        </div>
+                    </div>
+                    
+                    <!-- Pestaña de Experiencia -->
+                    <div class="tab-content" id="experience-tab">
+                        <div id="experienceContainer">
+                            <div class="form-group experience-item">
+                                <label>Experiencia Laboral #1</label>
+                                <input type="text" class="exp-title" placeholder="Puesto de trabajo">
+                                <input type="text" class="exp-company" placeholder="Empresa">
+                                <input type="text" class="exp-location" placeholder="Ubicación">
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <input type="text" class="exp-start" placeholder="Fecha inicio (MM/AAAA)" style="flex: 1;">
+                                    <input type="text" class="exp-end" placeholder="Fecha fin (MM/AAAA o Actual)" style="flex: 1;">
+                                </div>
+                                <textarea class="exp-description" placeholder="Descripción de responsabilidades y logros"></textarea>
+                            </div>
+                        </div>
+                        <button type="button" id="addExperience">+ Añadir Experiencia</button>
+                    </div>
+                    
+                    <!-- Pestaña de Educación -->
+                    <div class="tab-content" id="education-tab">
+                        <div id="educationContainer">
+                            <div class="form-group education-item">
+                                <label>Educación #1</label>
+                                <input type="text" class="edu-degree" placeholder="Título o Certificación">
+                                <input type="text" class="edu-institution" placeholder="Institución">
+                                <input type="text" class="edu-location" placeholder="Ubicación">
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <input type="text" class="edu-start" placeholder="Fecha inicio (MM/AAAA)" style="flex: 1;">
+                                    <input type="text" class="edu-end" placeholder="Fecha fin (MM/AAAA o Actual)" style="flex: 1;">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="addEducation">+ Añadir Educación</button>
+                    </div>
+                    
+                    <!-- Pestaña de Habilidades -->
+                    <div class="tab-content" id="skills-tab">
+                        <div class="form-group">
+                            <label for="skills">Habilidades Técnicas</label>
+                            <textarea id="skills" placeholder="Lista tus habilidades separadas por comas (ej: JavaScript, Python, Photoshop)"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="languages">Idiomas</label>
+                            <textarea id="languages" placeholder="Lista tus idiomas y nivel (ej: Inglés - Avanzado, Francés - Básico)"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="certifications">Certificaciones</label>
+                            <textarea id="certifications" placeholder="Lista tus certificaciones"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="button" id="generateCV">Generar CV</button>
+                        <button type="button" id="exportPDF" class="btn-export">Exportar a PDF</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="preview-section">
+                <h2>Vista Previa del CV</h2>
+                <div id="cvPreview" class="cv-template hidden">
+                    <!-- Aquí se generará el CV -->
+                </div>
+                <div id="emptyMessage">
+                    <p>Completa el formulario y haz clic en "Generar CV" para ver una vista previa de tu currículum.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Manejo de pestañas
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remover clase active de todas las pestañas y contenidos
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Agregar clase active a la pestaña clickeada
+                    tab.classList.add('active');
+                    
+                    // Mostrar el contenido correspondiente
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+            
+            // Añadir experiencia
+            let experienceCounter = 1;
+            document.getElementById('addExperience').addEventListener('click', function() {
+                experienceCounter++;
+                const newExperience = document.createElement('div');
+                newExperience.className = 'form-group experience-item';
+                newExperience.innerHTML = `
+                    <label>Experiencia Laboral #${experienceCounter}</label>
+                    <input type="text" class="exp-title" placeholder="Puesto de trabajo">
+                    <input type="text" class="exp-company" placeholder="Empresa">
+                    <input type="text" class="exp-location" placeholder="Ubicación">
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <input type="text" class="exp-start" placeholder="Fecha inicio (MM/AAAA)" style="flex: 1;">
+                        <input type="text" class="exp-end" placeholder="Fecha fin (MM/AAAA o Actual)" style="flex: 1;">
+                    </div>
+                    <textarea class="exp-description" placeholder="Descripción de responsabilidades y logros"></textarea>
+                `;
+                document.getElementById('experienceContainer').appendChild(newExperience);
+            });
+            
+            // Añadir educación
+            let educationCounter = 1;
+            document.getElementById('addEducation').addEventListener('click', function() {
+                educationCounter++;
+                const newEducation = document.createElement('div');
+                newEducation.className = 'form-group education-item';
+                newEducation.innerHTML = `
+                    <label>Educación #${educationCounter}</label>
+                    <input type="text" class="edu-degree" placeholder="Título o Certificación">
+                    <input type="text" class="edu-institution" placeholder="Institución">
+                    <input type="text" class="edu-location" placeholder="Ubicación">
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <input type="text" class="edu-start" placeholder="Fecha inicio (MM/AAAA)" style="flex: 1;">
+                        <input type="text" class="edu-end" placeholder="Fecha fin (MM/AAAA o Actual)" style="flex: 1;">
+                    </div>
+                `;
+                document.getElementById('educationContainer').appendChild(newEducation);
+            });
+            
+            // Generar CV
+            document.getElementById('generateCV').addEventListener('click', generateCV);
+            
+            // Exportar a PDF (funcionalidad básica - en un caso real usarías una librería como jsPDF)
+            document.getElementById('exportPDF').addEventListener('click', function() {
+                alert("En una implementación real, esto generaría un PDF. Para esto necesitarías una librería como jsPDF o html2pdf.js");
+                // Ejemplo con html2pdf.js:
+                // const element = document.getElementById('cvPreview');
+                // html2pdf().from(element).save();
+            });
+            
+            function generateCV() {
+                // Obtener datos personales
+                const fullName = document.getElementById('fullName').value;
+                const profession = document.getElementById('profession').value;
+                const about = document.getElementById('about').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const address = document.getElementById('address').value;
+                const linkedin = document.getElementById('linkedin').value;
+                const github = document.getElementById('github').value;
+                
+                // Obtener experiencias
+                const experienceItems = document.querySelectorAll('.experience-item');
+                const experiences = [];
+                experienceItems.forEach(item => {
+                    experiences.push({
+                        title: item.querySelector('.exp-title').value,
+                        company: item.querySelector('.exp-company').value,
+                        location: item.querySelector('.exp-location').value,
+                        start: item.querySelector('.exp-start').value,
+                        end: item.querySelector('.exp-end').value,
+                        description: item.querySelector('.exp-description').value
+                    });
+                });
+                
+                // Obtener educación
+                const educationItems = document.querySelectorAll('.education-item');
+                const educations = [];
+                educationItems.forEach(item => {
+                    educations.push({
+                        degree: item.querySelector('.edu-degree').value,
+                        institution: item.querySelector('.edu-institution').value,
+                        location: item.querySelector('.edu-location').value,
+                        start: item.querySelector('.edu-start').value,
+                        end: item.querySelector('.edu-end').value
+                    });
+                });
+                
+                // Obtener habilidades
+                const skills = document.getElementById('skills').value.split(',').map(skill => skill.trim());
+                const languages = document.getElementById('languages').value;
+                const certifications = document.getElementById('certifications').value;
+                
+                // Validación básica
+                if (!fullName || !profession) {
+                    alert("Por favor completa al menos tu nombre y profesión");
+                    return;
+                }
+                
+                // Generar HTML del CV
+                let cvHTML = `
+                    <div class="cv-header">
+                        <h1 class="cv-name">${fullName}</h1>
+                        <h2 class="cv-title">${profession}</h2>
+                        <div class="cv-contact">
+                            ${email ? `<div class="cv-contact-item"><span>✉️</span> ${email}</div>` : ''}
+                            ${phone ? `<div class="cv-contact-item"><span>📱</span> ${phone}</div>` : ''}
+                            ${address ? `<div class="cv-contact-item"><span>🏠</span> ${address}</div>` : ''}
+                            ${linkedin ? `<div class="cv-contact-item"><span>🔗</span> <a href="${linkedin}" target="_blank">LinkedIn</a></div>` : ''}
+                            ${github ? `<div class="cv-contact-item"><span>👨‍💻</span> <a href="${github}" target="_blank">Portafolio</a></div>` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                // Sección sobre mí
+                if (about) {
+                    cvHTML += `
+                        <div class="cv-section">
+                            <h3 class="cv-section-title">Sobre Mí</h3>
+                            <p>${about.replace(/\n/g, '<br>')}</p>
+                        </div>
+                    `;
+                }
+                
+                // Sección experiencia
+                if (experiences.length > 0 && experiences[0].title) {
+                    cvHTML += `
+                        <div class="cv-section">
+                            <h3 class="cv-section-title">Experiencia Profesional</h3>
+                    `;
+                    
+                    experiences.forEach(exp => {
+                        if (exp.title) {
+                            cvHTML += `
+                                <div class="cv-item">
+                                    <div class="cv-item-header">
+                                        <div class="cv-item-title">${exp.title}</div>
+                                        <div class="cv-item-date">${exp.start} - ${exp.end}</div>
+                                    </div>
+                                    <div class="cv-item-subtitle">${exp.company}${exp.location ? `, ${exp.location}` : ''}</div>
+                                    <p>${exp.description.replace(/\n/g, '<br>')}</p>
+                                </div>
+                            `;
+                        }
+                    });
+                    
+                    cvHTML += `</div>`;
+                }
+                
+                // Sección educación
+                if (educations.length > 0 && educations[0].degree) {
+                    cvHTML += `
+                        <div class="cv-section">
+                            <h3 class="cv-section-title">Educación</h3>
+                    `;
+                    
+                    educations.forEach(edu => {
+                        if (edu.degree) {
+                            cvHTML += `
+                                <div class="cv-item">
+                                    <div class="cv-item-header">
+                                        <div class="cv-item-title">${edu.degree}</div>
+                                        <div class="cv-item-date">${edu.start} - ${edu.end}</div>
+                                    </div>
+                                    <div class="cv-item-subtitle">${edu.institution}${edu.location ? `, ${edu.location}` : ''}</div>
+                                </div>
+                            `;
+                        }
+                    });
+                    
+                    cvHTML += `</div>`;
+                }
+                
+                // Sección habilidades
+                if (skills.length > 0 && skills[0]) {
+                    cvHTML += `
+                        <div class="cv-section">
+                            <h3 class="cv-section-title">Habilidades Técnicas</h3>
+                            <div class="cv-skills">
+                                ${skills.filter(skill => skill).map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Sección idiomas
+                if (languages) {
+                    cvHTML += `
+                        <div class="cv-section">
+                            <h3 class="cv-section-title">Idiomas</h3>
+                            <p>${languages.replace(/\n/g, '<br>')}</p>
+                        </div>
+                    `;
+                }
+                
+                // Sección certificaciones
+                if (certifications) {
+                    cvHTML += `
+                        <div class="cv-section">
+                            <h3 class="cv-section-title">Certificaciones</h3>
+                            <p>${certifications.replace(/\n/g, '<br>')}</p>
+                        </div>
+                    `;
+                }
+                
+                // Mostrar el CV generado
+                const cvPreview = document.getElementById('cvPreview');
+                cvPreview.innerHTML = cvHTML;
+                cvPreview.classList.remove('hidden');
+                document.getElementById('emptyMessage').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
