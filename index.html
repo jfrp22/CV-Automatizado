@@ -144,6 +144,13 @@
             padding: 30px;
             min-height: 800px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        
+        .cv-template.pdf-export {
+            width: 17.59cm;
+            padding: 0;
+            margin: 0 auto;
         }
         
         .cv-header {
@@ -243,6 +250,7 @@
             .cv-template {
                 box-shadow: none;
                 padding: 0;
+                margin: 0;
             }
         }
         
@@ -468,30 +476,51 @@
                     return;
                 }
 
+                // Clonamos el elemento para modificar estilos solo para el PDF
+                const elementClone = element.cloneNode(true);
+                elementClone.classList.add('pdf-export');
+                
                 const opt = {
-                    margin: 10,
+                    margin: 2, // 2cm de margen en todos los lados
                     filename: 'mi_cv.pdf',
-                    image: { type: 'jpeg', quality: 0.98 },
+                    image: { 
+                        type: 'jpeg', 
+                        quality: 0.98 
+                    },
                     html2canvas: { 
                         scale: 2,
                         logging: true,
                         useCORS: true,
-                        allowTaint: true
+                        allowTaint: true,
+                        width: 816, // 21.59cm en pixels (21.59*37.8)
+                        windowWidth: 816
                     },
                     jsPDF: { 
-                        unit: 'mm', 
-                        format: 'a4', 
-                        orientation: 'portrait' 
+                        unit: 'cm', 
+                        format: 'letter', // Formato carta (21.59cm x 27.94cm)
+                        orientation: 'portrait',
+                        hotfixes: ["px_scaling"] // Corrige problemas de escala
                     }
                 };
 
+                // Creamos un contenedor temporal para la exportación
+                const tempContainer = document.createElement('div');
+                tempContainer.style.position = 'absolute';
+                tempContainer.style.left = '-9999px';
+                tempContainer.appendChild(elementClone);
+                document.body.appendChild(tempContainer);
+
                 html2pdf()
                     .set(opt)
-                    .from(element)
+                    .from(tempContainer)
                     .save()
+                    .then(() => {
+                        document.body.removeChild(tempContainer);
+                    })
                     .catch(err => {
                         console.error("Error al generar PDF:", err);
                         alert("Ocurrió un error al generar el PDF. Por favor intenta nuevamente.");
+                        document.body.removeChild(tempContainer);
                     });
             });
             
