@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de CV Profesional</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --primary-color: #3498db;
@@ -138,7 +139,6 @@
             margin-top: 20px;
         }
         
-        /* Estilos para el CV generado */
         .cv-template {
             background: white;
             padding: 30px;
@@ -246,7 +246,6 @@
             }
         }
         
-        /* Pestañas para diferentes secciones */
         .tabs {
             display: flex;
             margin-bottom: 20px;
@@ -297,7 +296,6 @@
                 </div>
                 
                 <form id="cvForm">
-                    <!-- Pestaña de Información Personal -->
                     <div class="tab-content active" id="personal-tab">
                         <div class="form-group">
                             <label for="fullName">Nombre Completo</label>
@@ -340,7 +338,6 @@
                         </div>
                     </div>
                     
-                    <!-- Pestaña de Experiencia -->
                     <div class="tab-content" id="experience-tab">
                         <div id="experienceContainer">
                             <div class="form-group experience-item">
@@ -358,7 +355,6 @@
                         <button type="button" id="addExperience">+ Añadir Experiencia</button>
                     </div>
                     
-                    <!-- Pestaña de Educación -->
                     <div class="tab-content" id="education-tab">
                         <div id="educationContainer">
                             <div class="form-group education-item">
@@ -375,7 +371,6 @@
                         <button type="button" id="addEducation">+ Añadir Educación</button>
                     </div>
                     
-                    <!-- Pestaña de Habilidades -->
                     <div class="tab-content" id="skills-tab">
                         <div class="form-group">
                             <label for="skills">Habilidades Técnicas</label>
@@ -403,7 +398,6 @@
             <div class="preview-section">
                 <h2>Vista Previa del CV</h2>
                 <div id="cvPreview" class="cv-template hidden">
-                    <!-- Aquí se generará el CV -->
                 </div>
                 <div id="emptyMessage">
                     <p>Completa el formulario y haz clic en "Generar CV" para ver una vista previa de tu currículum.</p>
@@ -414,24 +408,19 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Manejo de pestañas
             const tabs = document.querySelectorAll('.tab');
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
-                    // Remover clase active de todas las pestañas y contenidos
                     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                     
-                    // Agregar clase active a la pestaña clickeada
                     tab.classList.add('active');
                     
-                    // Mostrar el contenido correspondiente
                     const tabId = tab.getAttribute('data-tab');
                     document.getElementById(`${tabId}-tab`).classList.add('active');
                 });
             });
             
-            // Añadir experiencia
             let experienceCounter = 1;
             document.getElementById('addExperience').addEventListener('click', function() {
                 experienceCounter++;
@@ -451,7 +440,6 @@
                 document.getElementById('experienceContainer').appendChild(newExperience);
             });
             
-            // Añadir educación
             let educationCounter = 1;
             document.getElementById('addEducation').addEventListener('click', function() {
                 educationCounter++;
@@ -470,19 +458,44 @@
                 document.getElementById('educationContainer').appendChild(newEducation);
             });
             
-            // Generar CV
             document.getElementById('generateCV').addEventListener('click', generateCV);
             
-            // Exportar a PDF (funcionalidad básica - en un caso real usarías una librería como jsPDF)
             document.getElementById('exportPDF').addEventListener('click', function() {
-                alert("En una implementación real, esto generaría un PDF. Para esto necesitarías una librería como jsPDF o html2pdf.js");
-                // Ejemplo con html2pdf.js:
-                // const element = document.getElementById('cvPreview');
-                // html2pdf().from(element).save();
+                const element = document.getElementById('cvPreview');
+                
+                if(element.classList.contains('hidden')) {
+                    alert("Por favor genera primero tu CV antes de exportar");
+                    return;
+                }
+
+                const opt = {
+                    margin: 10,
+                    filename: 'mi_cv.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { 
+                        scale: 2,
+                        logging: true,
+                        useCORS: true,
+                        allowTaint: true
+                    },
+                    jsPDF: { 
+                        unit: 'mm', 
+                        format: 'a4', 
+                        orientation: 'portrait' 
+                    }
+                };
+
+                html2pdf()
+                    .set(opt)
+                    .from(element)
+                    .save()
+                    .catch(err => {
+                        console.error("Error al generar PDF:", err);
+                        alert("Ocurrió un error al generar el PDF. Por favor intenta nuevamente.");
+                    });
             });
             
             function generateCV() {
-                // Obtener datos personales
                 const fullName = document.getElementById('fullName').value;
                 const profession = document.getElementById('profession').value;
                 const about = document.getElementById('about').value;
@@ -492,7 +505,6 @@
                 const linkedin = document.getElementById('linkedin').value;
                 const github = document.getElementById('github').value;
                 
-                // Obtener experiencias
                 const experienceItems = document.querySelectorAll('.experience-item');
                 const experiences = [];
                 experienceItems.forEach(item => {
@@ -506,7 +518,6 @@
                     });
                 });
                 
-                // Obtener educación
                 const educationItems = document.querySelectorAll('.education-item');
                 const educations = [];
                 educationItems.forEach(item => {
@@ -519,18 +530,15 @@
                     });
                 });
                 
-                // Obtener habilidades
                 const skills = document.getElementById('skills').value.split(',').map(skill => skill.trim());
                 const languages = document.getElementById('languages').value;
                 const certifications = document.getElementById('certifications').value;
                 
-                // Validación básica
                 if (!fullName || !profession) {
                     alert("Por favor completa al menos tu nombre y profesión");
                     return;
                 }
                 
-                // Generar HTML del CV
                 let cvHTML = `
                     <div class="cv-header">
                         <h1 class="cv-name">${fullName}</h1>
@@ -545,7 +553,6 @@
                     </div>
                 `;
                 
-                // Sección sobre mí
                 if (about) {
                     cvHTML += `
                         <div class="cv-section">
@@ -555,7 +562,6 @@
                     `;
                 }
                 
-                // Sección experiencia
                 if (experiences.length > 0 && experiences[0].title) {
                     cvHTML += `
                         <div class="cv-section">
@@ -580,7 +586,6 @@
                     cvHTML += `</div>`;
                 }
                 
-                // Sección educación
                 if (educations.length > 0 && educations[0].degree) {
                     cvHTML += `
                         <div class="cv-section">
@@ -604,7 +609,6 @@
                     cvHTML += `</div>`;
                 }
                 
-                // Sección habilidades
                 if (skills.length > 0 && skills[0]) {
                     cvHTML += `
                         <div class="cv-section">
@@ -616,7 +620,6 @@
                     `;
                 }
                 
-                // Sección idiomas
                 if (languages) {
                     cvHTML += `
                         <div class="cv-section">
@@ -626,7 +629,6 @@
                     `;
                 }
                 
-                // Sección certificaciones
                 if (certifications) {
                     cvHTML += `
                         <div class="cv-section">
@@ -636,7 +638,6 @@
                     `;
                 }
                 
-                // Mostrar el CV generado
                 const cvPreview = document.getElementById('cvPreview');
                 cvPreview.innerHTML = cvHTML;
                 cvPreview.classList.remove('hidden');
